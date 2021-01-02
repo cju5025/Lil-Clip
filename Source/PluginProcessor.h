@@ -54,6 +54,9 @@ public:
     void setStateInformation (const void* data, int sizeInBytes) override;
 
 private:
+    AudioParameterFloat* mMixParameter;
+    AudioParameterFloat* mThresholdParameter;
+    
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SoftClipperAudioProcessor)
 };
