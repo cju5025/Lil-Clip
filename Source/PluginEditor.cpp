@@ -5,9 +5,35 @@
 SoftClipperAudioProcessorEditor::SoftClipperAudioProcessorEditor (SoftClipperAudioProcessor& p)
     : AudioProcessorEditor (&p), audioProcessor (p)
 {
-    // Make sure that before the constructor has finished, you've set the
-    // editor's size to whatever you need it to be.
-    setSize (400, 300);
+    setSize (200, 175);
+    
+    auto& params = processor.getParameters();
+    
+    //mix slider
+    AudioParameterFloat* mMixParameter = (AudioParameterFloat*)params.getUnchecked(0);
+    
+    mMixSlider.setSliderStyle(Slider::SliderStyle::RotaryVerticalDrag);
+    mMixSlider.setTextBoxStyle(Slider::TextBoxBelow, false, 70, 15);
+    mMixSlider.setRange(mMixParameter->range.start, mMixParameter->range.end);
+    mMixSlider.setValue(*mMixParameter);
+    addAndMakeVisible(mMixSlider);
+    
+    mMixSlider.onValueChange = [this, mMixParameter] {*mMixParameter = mMixSlider.getValue(); };
+    mMixSlider.onDragStart = [mMixParameter] {mMixParameter->beginChangeGesture(); };
+    mMixSlider.onDragEnd = [mMixParameter] {mMixParameter->endChangeGesture(); };
+    
+    // threshold slider
+    AudioParameterFloat* mThresholdParameter = (AudioParameterFloat*)params.getUnchecked(1);
+    
+    mThresholdSlider.setSliderStyle(Slider::SliderStyle::RotaryVerticalDrag);
+    mThresholdSlider.setTextBoxStyle(Slider::TextBoxBelow, false, 70, 15);
+    mThresholdSlider.setRange(mThresholdParameter->range.start, mThresholdParameter->range.end);
+    mThresholdSlider.setValue(*mThresholdParameter);
+    addAndMakeVisible(mThresholdSlider);
+    
+    mThresholdSlider.onValueChange = [this, mThresholdParameter] {*mThresholdParameter = mThresholdSlider.getValue(); };
+    mThresholdSlider.onDragStart = [mThresholdParameter] {mThresholdParameter->beginChangeGesture(); };
+    mThresholdSlider.onDragEnd = [mThresholdParameter] {mThresholdParameter->endChangeGesture(); };
 }
 
 SoftClipperAudioProcessorEditor::~SoftClipperAudioProcessorEditor()
@@ -17,16 +43,16 @@ SoftClipperAudioProcessorEditor::~SoftClipperAudioProcessorEditor()
 //==============================================================================
 void SoftClipperAudioProcessorEditor::paint (juce::Graphics& g)
 {
-    // (Our component is opaque, so we must completely fill the background with a solid colour)
     g.fillAll (getLookAndFeel().findColour (juce::ResizableWindow::backgroundColourId));
-
     g.setColour (juce::Colours::white);
     g.setFont (15.0f);
-    g.drawFittedText ("Hello World!", getLocalBounds(), juce::Justification::centred, 1);
+    
+    g.drawText("Mix", ((getWidth() / 7) * 1) - (30), (getHeight() / 2) - 15, 100, 100, Justification::centred, false);
+    g.drawText("Threshold", ((getWidth() / 5) * 2) + (15), (getHeight() / 2) - 15, 100, 100, Justification::centred, false);
 }
 
 void SoftClipperAudioProcessorEditor::resized()
 {
-    // This is generally where you'll want to lay out the positions of any
-    // subcomponents in your editor..
+    mMixSlider.setBounds(0, 0, 100, 100);
+    mThresholdSlider.setBounds(100, 0, 100, 100);
 }
